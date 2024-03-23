@@ -2,6 +2,8 @@ require('dotenv').config()
 var express = require('express');
 const { Web3 } = require('web3');
 const Provider = require('@truffle/hdwallet-provider');
+const { Client } = require('@xmtp/xmtp-js');
+const { Wallet } = require('ethers');
 
 var app = express();
 var port = process.env.PORT || 3000;
@@ -30,6 +32,47 @@ app.get('/balanceOf', async (req, res) => {
         res.status(500).json({ success: false, message: 'Error fetching data from the smart contract' });
     }
 });
+
+// TODO: implement the register method
+// app.post('/register', async (req, res) => {
+//     try {
+//         const data = await contract.methods.register(req.body.address, req.body.username);
+//         res.json({ value: data });
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ success: false, message: 'Error fetching data from the smart contract' });
+//     }
+// });
+
+// Use this method to send a message
+// TODO should infer sender from header token, for now, just grab from request body
+// app.post('/croak', async (req, res) => {
+
+//     try {
+//         // Send a message with XMTP
+//         const signer = Wallet.createRandom();
+//         const xmtp = await Client.create(signer, { env: "dev" });
+//         // Start a conversation with XMTP
+//         const conversation = await xmtp.conversations.newConversation(
+//         req.body.recipientAddress,
+//         );
+//         // Load all messages in the conversation
+//         const messages = await conversation.messages();
+//         // Send a message
+//         await conversation.send(req.body.message);
+//         // Listen for new messages in the conversation
+//         for await (const message of await conversation.streamMessages()) {
+//         console.log(`[${message.senderAddress}]: ${message.content}`);
+//         }
+//         // Call smart contract
+//         const data = await contract.methods.croak(req.body.recipientAddress).send({ from: req.body.senderAddress });
+//         res.json({ value: data });
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ success: false, message: `Error croaking!` });
+//     }
+
+// });
 
 app.listen(port);
 console.log('listening on', port);

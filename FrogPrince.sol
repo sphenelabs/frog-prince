@@ -2,6 +2,7 @@
 pragma solidity ^0.8.13;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts@4.4.1/token/ERC721/extensions/ERC721URIStorage.sol";
 
 contract FrogPrince is ERC721URIStorage {
     uint public matchThreshold;
@@ -30,6 +31,7 @@ contract FrogPrince is ERC721URIStorage {
     event Croak(address indexed from, address indexed to);
     event TadpoleHatched(address indexed from, address indexed partner, uint256 tokenId);
     event EggLaid(address indexed from, address indexed partner, string cid);
+    event FrogsMatched(address indexed from, address indexed partner);
 
     constructor(uint _matchThreshold, uint _mintThreshold, uint _maxMosquitoes) ERC721("FrogPrincess", "FRGPRN") {
         matchThreshold = _matchThreshold;
@@ -54,12 +56,14 @@ contract FrogPrince is ERC721URIStorage {
 
     function sendMosquitoes(uint _number, address _to) public {
         require(frogs[_to].height != 0, "Frog does not exist.");
-        require(_number < maxMosquitoes, "Cannot send more than 5 mosquitoes.");
-        require(_number > 0, "Cannot send non-positive number of mosquitoes.");
-        require(mosquitoBalance[msg.sender][_to] > 0, "Cannot only send once!");
-        require(frogs[_to] != msg.sender, "Cannot send to your self!");
-        mosquitoBalance[msg.sender][_to] += _number;
+        require(_number <= maxMosquitoes, "Cannot send more than MAX mosquitoes.");
+        require(_to != msg.sender, "Cannot send to your self!");
+        mosquitoBalance[msg.sender][_to] = _number;
         emit MosquitoesSent(msg.sender, _to, _number);
+        if (mosquitoBalance[msg.sender][_to] + mosquitoBalance[_to][msg.sender]>= matchThreshold) {
+            emit FrogsMatched(msg.sender, _to);
+        }
+        emit FrogsMatched(msg.sender, _to);
     }
 
     function getAllMatches() public view returns (address[] memory) {
