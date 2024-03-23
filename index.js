@@ -53,7 +53,7 @@ app.get("/frogs", async (req, res) => {
 app.post("/sendMosquitoes", async (req, res) => {
     try {
         var receipt = await contract.methods.sendMosquitoes(2, WALLET_ADDRESS_2).send({ from: WALLET_ADDRESS });
-        res.json({ value: data });
+        res.json({ value: receipt });
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: 'Error fetching data from the smart contract' });
