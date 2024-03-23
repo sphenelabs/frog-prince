@@ -34,6 +34,11 @@ Different network had different issues.
 3. Sepolia - `hatchTadpole` pending for a long time and got dropped
 4. OP Sepolia - could not verify contract
 
+### ORA
+
+ORA is on Sepolia. Amount to pay per generation is quite high at 0.18 ether. We end up implementing offchain generation as well (way cheaper in production than ORA). 
+
+
 ### Confidential! 
 Here is a set of confidentials to get you started playing with the app on testnet! Note that these are Testnet credentials only. Replace with your own and keep them safe when going live!
 

@@ -89,33 +89,29 @@ app.post('/layEgg', async (req, res) => {
         // }});
       
         // console.log('Generated Text:', response.data);
-        // ORA Stable Diffusion Model
-        const abi = require(process.env.TXT_PROMPT_CONTRACT_ABI_PATH);
-        const provider = new Provider(WALLET_PRIVATE_KEY, process.env.TXT_PROMPT_RPC_URL);
-        const web3 = new Web3(provider);
-        const promptContract = new web3.eth.Contract(abi, process.env.TXT_PROMPT_CONTRACT_ADDRESS);
-        const receipt = await promptContract.methods.calculateAIResult(50, prompt).send({
-            from: WALLET_ADDRESS,
-            value: 180000000000000000 // Value in Wei (0.18 ETH)
-          });
-        console.log("receipt", receipt);
-        // const eggCids = [];
-        // frogs.foreach(frog => {
-        //     promptContract.methods.calculateAIResult(50, prompt);
-        //     const cid = promptContract.methods.getAIResult(50, prompt);
-        //     eggCids.push(cid);
-        // });
-        // res.json({ value: { eggCids } });
 
-        // Dalle3
-        // const response = await openai.images.generate({
-        //     model: "dall-e-3",
-        //     prompt: prompt,
-        //     n: 1,
-        //     size: "1024x1024",
-        // });
-        // console.log("Generate image", response);
-        // image_url = response.data.data[0].url;
+        // ORA Stable Diffusion Model
+        // const abi = require(process.env.TXT_PROMPT_CONTRACT_ABI_PATH);
+        // const provider = new Provider(WALLET_PRIVATE_KEY, process.env.TXT_PROMPT_RPC_URL);
+        // const web3 = new Web3(provider);
+        // const promptContract = new web3.eth.Contract(abi, process.env.TXT_PROMPT_CONTRACT_ADDRESS);
+        // const receipt = await promptContract.methods.calculateAIResult(50, prompt).send({
+        //     from: WALLET_ADDRESS,
+        //     value: 180000000000000000 // Value in Wei (0.18 ETH)
+        //   });
+        // console.log("receipt", receipt);
+
+        // step 1 generate text prompt
+ 
+        // step 2 feed the text prompt to dall-e
+        const response = await openai.images.generate({
+            model: "dall-e-3",
+            prompt: prompt,
+            n: 1,
+            size: "1024x1024",
+        });
+        console.log("Generate image", response);
+        res.json({ value: { url: response.data[0].url } });
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: 'Error laying eggs!' });
