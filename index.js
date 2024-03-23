@@ -19,11 +19,20 @@ const contract = new web3.eth.Contract(SMART_CONTRACT_ABI, SMART_CONTRACT_ADDRES
 // example of calling a read method and get the return: await myContract.methods["balanceOf"](address).call();
 // example of calling a read method and get the return: await myContract.methods.balanceOf(address).call();
 
-app.get('/balanceOf', async (req, res) => {
+app.get("/balanceOf", async (req, res) => {
     try {
-        console.log("WALLET_ADDRESS", WALLET_ADDRESS)
-        console.log("contract.methods.balanceOf", contract.methods.balanceOf)
         const data = await contract.methods.balanceOf(WALLET_ADDRESS);
+        res.json({ value: data });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Error fetching data from the smart contract' });
+    }
+});
+
+app.post("/sendMosquitoes", async (req, res) => {
+    try {
+        const data = await contract.methods.balanceOf(WALLET_ADDRESS);
+        var receipt = await myContract.methods.sendMosquitoes(5781).send({ from: address });
         res.json({ value: data });
     } catch (error) {
         console.error(error);
