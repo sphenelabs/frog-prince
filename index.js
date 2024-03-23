@@ -14,6 +14,8 @@ const WALLET_ADDRESS = process.env.WALLET_ADDRESS;
 const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
 const RPC_URL = process.env.RPC_URL;
 
+const WALLET_ADDRESS_2 = process.env.WALLET_ADDRESS_2;
+
 const provider = new Provider(WALLET_PRIVATE_KEY, RPC_URL);
 const web3 = new Web3(provider);
 const contract = new web3.eth.Contract(SMART_CONTRACT_ABI, SMART_CONTRACT_ADDRESS);
@@ -21,10 +23,17 @@ const contract = new web3.eth.Contract(SMART_CONTRACT_ABI, SMART_CONTRACT_ADDRES
 // example of calling a read method and get the return: await myContract.methods["balanceOf"](address).call();
 // example of calling a read method and get the return: await myContract.methods.balanceOf(address).call();
 
-app.get('/balanceOf', async (req, res) => {
+app.get("/", async (req, res) => {
     try {
-        console.log("WALLET_ADDRESS", WALLET_ADDRESS)
-        console.log("contract.methods.balanceOf", contract.methods.balanceOf)
+        res.json({ value: true });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Error fetching data from the smart contract' });
+    }
+});
+
+app.get("/balanceOf", async (req, res) => {
+    try {
         const data = await contract.methods.balanceOf(WALLET_ADDRESS);
         res.json({ value: data });
     } catch (error) {
@@ -73,6 +82,30 @@ app.get('/balanceOf', async (req, res) => {
 //     }
 
 // });
+
+app.get("/frogs", async (req, res) => {
+    try {
+        const data = await contract.methods.balanceOf(WALLET_ADDRESS);
+        res.json({ value: data });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Error fetching data from the smart contract' });
+    }
+});
+
+app.post("/sendMosquitoes", async (req, res) => {
+    try {
+        var receipt = await contract.methods.sendMosquitoes(1, WALLET_ADDRESS_2).send({ from: WALLET_ADDRESS });
+        res.json({ value: receipt });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Error fetching data from the smart contract' });
+    }
+});
+
+
+
+
 
 app.listen(port);
 console.log('listening on', port);
