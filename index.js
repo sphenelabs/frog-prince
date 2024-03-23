@@ -3,6 +3,10 @@ var express = require('express');
 const { Web3 } = require('web3');
 const Provider = require('@truffle/hdwallet-provider');
 const { Client } = require('@xmtp/xmtp-js');
+const axios = require('axios');
+
+const OpenAI = require('openai');
+const openai = new OpenAI({apiKey: process.env.TXT_PROMPT_API_KEY});
 
 var app = express();
 app.use(express.json());
@@ -18,9 +22,6 @@ const RPC_URL = process.env.RPC_URL;
 const provider = new Provider(WALLET_PRIVATE_KEY, RPC_URL);
 const web3 = new Web3(provider);
 const contract = new web3.eth.Contract(SMART_CONTRACT_ABI, SMART_CONTRACT_ADDRESS);
-
-const promptContractABIPath = "./prompt.abi.json";
-const promptContractAddress = "0x64BF816c3b90861a489A8eDf3FEA277cE1Fa0E82"
 
 app.get("/", async (req, res) => {
     try {
@@ -47,7 +48,7 @@ app.get("/balanceOf", async (req, res) => {
  * Register a new frog (these are web2 users, so create a new wallet for them)
  * req.body = {
  *   username: string,
- *  descriptor: string
+ *   descriptor: string
  * }
  * Returns the wallet address and private key created for that user
  */
@@ -67,19 +68,57 @@ app.post('/register', async (req, res) => {
     }
 });
 
-app.post('/generateEggImages', async (req, res) => {
-    const { modelId, prompt, frogs } = req.body;
+/**
+ * Generate egg images for a prompt
+ * req.body = {
+ *  fromAddress: string,
+ *  toAddress: string,
+ *  prompt: string
+ * }
+ */
+app.post('/layEgg', async (req, res) => {
+    const { fromAddress, toAddress, prompt } = req.body;
     try {
-        const eggCids = [];
-        frogs.foreach(frog => {
-            promptContract.methods.calculateAIResult(50, prompt);
-            const cid = promptContract.methods.getAIResult(50, prompt);
-            eggCids.push(cid);
-        });
-        res.json({ value: { eggCids } });
+
+        // generate a better prompt using our own openai customgpt
+        // const response = await axios.post(process.env.TXT_PROMPT_MODEL_URL, {
+        //     prompt: prompt,
+        // }, {
+        //     headers: {
+        //       'Authorization': `Bearer ${process.env.TXT_PROMPT_API_KEY}`, // Or "X-API-KEY": apiKey depending on the API
+        // }});
+      
+        // console.log('Generated Text:', response.data);
+        // ORA Stable Diffusion Model
+        const abi = require(process.env.TXT_PROMPT_CONTRACT_ABI_PATH);
+        const provider = new Provider(WALLET_PRIVATE_KEY, process.env.TXT_PROMPT_RPC_URL);
+        const web3 = new Web3(provider);
+        const promptContract = new web3.eth.Contract(abi, process.env.TXT_PROMPT_CONTRACT_ADDRESS);
+        const receipt = await promptContract.methods.calculateAIResult(50, prompt).send({
+            from: WALLET_ADDRESS,
+            value: 180000000000000000 // Value in Wei (0.18 ETH)
+          });
+        console.log("receipt", receipt);
+        // const eggCids = [];
+        // frogs.foreach(frog => {
+        //     promptContract.methods.calculateAIResult(50, prompt);
+        //     const cid = promptContract.methods.getAIResult(50, prompt);
+        //     eggCids.push(cid);
+        // });
+        // res.json({ value: { eggCids } });
+
+        // Dalle3
+        // const response = await openai.images.generate({
+        //     model: "dall-e-3",
+        //     prompt: prompt,
+        //     n: 1,
+        //     size: "1024x1024",
+        // });
+        // console.log("Generate image", response);
+        // image_url = response.data.data[0].url;
     } catch (error) {
         console.error(error);
-        res.status(500).json({ success: false, message: 'Error registering frog in the smart contract' });
+        res.status(500).json({ success: false, message: 'Error laying eggs!' });
     }
 });
 
