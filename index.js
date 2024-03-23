@@ -20,6 +20,10 @@ const provider = new Provider(WALLET_PRIVATE_KEY, RPC_URL);
 const web3 = new Web3(provider);
 const contract = new web3.eth.Contract(SMART_CONTRACT_ABI, SMART_CONTRACT_ADDRESS);
 
+const promptContractABIPath = "./prompt.abi.json";
+const promptContractAddress = "0x64BF816c3b90861a489A8eDf3FEA277cE1Fa0E82"
+// const promptContract = new web3.eth.Contract(require(promptContractABIPath), promptContractAddress, { from: WALLET_ADDRESS });
+
 // example of calling a read method and get the return: await myContract.methods["balanceOf"](address).call();
 // example of calling a read method and get the return: await myContract.methods.balanceOf(address).call();
 
@@ -120,6 +124,22 @@ app.post("/sendMosquitoes", async (req, res) => {
     }
 });
 
+/**
+ * req.body = {
+ *   fromAddress: string,
+ *   modelId: string,
+ *   prompt: string,
+ * }
+ */
+app.post("/generateEggImages", async (req, res) => {
+    const { fromAddress, modelId, prompt } = req.body;
+    try {
+        const promptContract = new web3.eth.Contract(require(promptContractABIPath), promptContractAddress, { from: fromAddress });
+        let result = await promptContract.methods.calculatecalculateAIResult(modelId, prompt, {
+            value: fee,
+        });
+    }
+});
 
 
 

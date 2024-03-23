@@ -106,4 +106,18 @@ contract FrogPrince is ERC721URIStorage {
         eggs[msg.sender][_partner] = cid;
         emit EggLaid(msg.sender, _partner, cid);
     }
+
+    // TODO helper function when a frog registers
+    // generate potential frog egg images
+    // prompt from offchain openai customgpt
+    function generateEggImages(string memory _prompt, address _partner) public pure returns (string memory cid) {
+        // call ORA contract (stable diffusion model)
+        
+
+        eggs[msg.sender][_partner] = cid;
+        eggs[_partner][msg.sender] = cid;
+        emit EggLaid(msg.sender, _partner, cid);
+        return cid;
+    }
+
 }
