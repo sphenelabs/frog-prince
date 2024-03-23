@@ -85,6 +85,16 @@ app.post('/croak', async (req, res) => {
 
 });
 
+app.get("/balanceOfWithAddress/", async (req, res) => {
+    try {
+        const data = await contract.methods.balanceOf(WALLET_ADDRESS);
+        res.json({ value: data });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Error fetching data from the smart contract' });
+    }
+});
+
 app.get("/frogs", async (req, res) => {
     try {
         const data = await contract.methods.balanceOf(WALLET_ADDRESS);
@@ -95,9 +105,16 @@ app.get("/frogs", async (req, res) => {
     }
 });
 
+/**
+ * req.body = {
+ *   fromAddress: string,
+ *   toAddress: string
+ * }
+ */
 app.post("/sendMosquitoes", async (req, res) => {
+    const { fromAddress, toAddress } = req.body;
     try {
-        var receipt = await contract.methods.sendMosquitoes(1, WALLET_ADDRESS_2).send({ from: WALLET_ADDRESS });
+        var receipt = await contract.methods.sendMosquitoes(1, toAddress).send({ from: fromAddress });
         res.json({ value: receipt });
     } catch (error) {
         console.error(error);
