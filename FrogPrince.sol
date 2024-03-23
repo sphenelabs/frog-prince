@@ -24,6 +24,13 @@ contract FrogPrince is ERC721URIStorage {
     mapping(address => mapping(address => uint)) public croaks;
     mapping(address => mapping(address => string)) public eggs;
 
+    // Events
+    event FrogRegistered(address indexed frogAddress, string username);
+    event MosquitoesSent(address indexed from, address indexed to, uint number);
+    event Croak(address indexed from, address indexed to);
+    event TadpoleHatched(address indexed from, address indexed partner, uint256 tokenId);
+    event EggLaid(address indexed from, address indexed partner, string cid);
+
     constructor(uint _matchThreshold, uint _mintThreshold, uint _maxMosquitoes) ERC721("FrogPrincess", "FRGPRN") {
         matchThreshold = _matchThreshold;
         mintThreshold = _mintThreshold;
@@ -42,6 +49,7 @@ contract FrogPrince is ERC721URIStorage {
     ) public {
         require(frogs[msg.sender].height == 0, "Frog exists!");
         frogs[msg.sender] = Frog(username, hobby, ethnicity, gender, nationality, height, education, occupation);
+        emit FrogRegistered(msg.sender, username);
     }
 
     function sendMosquitoes(uint _number, address _to) public {
@@ -49,7 +57,9 @@ contract FrogPrince is ERC721URIStorage {
         require(_number < maxMosquitoes, "Cannot send more than 5 mosquitoes.");
         require(_number > 0, "Cannot send non-positive number of mosquitoes.");
         require(mosquitoBalance[msg.sender][_to] > 0, "Cannot only send once!");
+        require(frogs[_to] != msg.sender, "Cannot send to your self!");
         mosquitoBalance[msg.sender][_to] += _number;
+        emit MosquitoesSent(msg.sender, _to, _number);
     }
 
     function getAllMatches() public view returns (address[] memory) {
@@ -74,6 +84,7 @@ contract FrogPrince is ERC721URIStorage {
     function croak(address _to) public {
         require(frogs[_to].height != 0, "Frog does not exist.");
         croaks[msg.sender][_to]++;
+        emit Croak(msg.sender, _to);
     }
 
     // TODO this function should probably be payable 
@@ -83,10 +94,12 @@ contract FrogPrince is ERC721URIStorage {
         uint256 tokenId = uint256(keccak256(abi.encodePacked(eggs[msg.sender][_partner], msg.sender, _partner)));
         _mint(msg.sender, tokenId);
         _setTokenURI(tokenId, eggs[msg.sender][_partner]);
+        emit TadpoleHatched(msg.sender, _partner, tokenId);
     }
 
     // TODO note this function should be access controlled after the hackathon
     function layEgg(string memory cid, address _partner) public {
         eggs[msg.sender][_partner] = cid;
+        emit EggLaid(msg.sender, _partner, cid);
     }
 }
