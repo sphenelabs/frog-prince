@@ -1084,16 +1084,18 @@ contract FrogPrince is ERC721URIStorage {
     uint public matchThreshold;
     uint public mintThreshold;
     uint public maxMosquitoes;
+    uint public tokenId;
 
     struct Frog {
         string username;
-        string hobby;
-        string ethnicity;
-        string gender;
-        string nationality;
-        uint height;
-        string education;
-        string occupation;
+        string froggyDescriptor; // harness the power of LLM and store all attributes in a single descriptive string
+        // string hobby;
+        // string ethnicity;
+        // string gender;
+        // string nationality;
+        // uint height;
+        // string education;
+        // string occupation;
     }
 
     mapping(address => Frog) public frogs;
@@ -1117,23 +1119,23 @@ contract FrogPrince is ERC721URIStorage {
 
     function register(
         string memory username,
-        string memory hobby,
-        string memory ethnicity,
-        string memory gender,
-        string memory nationality,
-        uint height,
-        string memory education,
-        string memory occupation
+        string memory froggyDescriptor
+        // string memory hobby,
+        // string memory ethnicity,
+        // string memory gender,
+        // string memory nationality,
+        // uint height,
+        // string memory education,
+        // string memory occupation
     ) public {
-        require(frogs[msg.sender].height == 0, "Frog exists!");
-        frogs[msg.sender] = Frog(username, hobby, ethnicity, gender, nationality, height, education, occupation);
+        frogs[msg.sender] = Frog(username, froggyDescriptor);
+        // frogs[msg.sender] = Frog(username, hobby, ethnicity, gender, nationality, height, education, occupation);
         emit FrogRegistered(msg.sender, username);
     }
 
     function sendMosquitoes(uint _number, address _to) public {
-        require(frogs[_to].height != 0, "Frog does not exist.");
-        require(_number < maxMosquitoes, "Cannot send more than MAX mosquitoes.");
-        require(_number > 0, "Cannot send non-positive number of mosquitoes.");
+        // require(frogs[_to].height != 0, "Frog does not exist.");
+        require(_number <= maxMosquitoes, "Cannot send more than MAX mosquitoes.");
         require(_to != msg.sender, "Cannot send to your self!");
         mosquitoBalance[msg.sender][_to] = _number;
         emit MosquitoesSent(msg.sender, _to, _number);
@@ -1163,7 +1165,7 @@ contract FrogPrince is ERC721URIStorage {
     }
 
     function croak(address _to) public {
-        require(frogs[_to].height != 0, "Frog does not exist.");
+        // require(frogs[_to].height != 0, "Frog does not exist.");
         croaks[msg.sender][_to]++;
         emit Croak(msg.sender, _to);
     }
@@ -1172,8 +1174,8 @@ contract FrogPrince is ERC721URIStorage {
     // you have to pay to hatch an egg
     function hatchTadpole(address _partner) public {
         require(croaks[msg.sender][_partner] + croaks[_partner][msg.sender] > mintThreshold, "Mint threshold not met.");
-        uint256 tokenId = uint256(keccak256(abi.encodePacked(eggs[msg.sender][_partner], msg.sender, _partner)));
         _mint(msg.sender, tokenId);
+        tokenId = tokenId + 1;
         _setTokenURI(tokenId, eggs[msg.sender][_partner]);
         emit TadpoleHatched(msg.sender, _partner, tokenId);
     }

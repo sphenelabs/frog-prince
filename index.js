@@ -6,6 +6,8 @@ const { Client } = require('@xmtp/xmtp-js');
 const { Wallet } = require('ethers');
 
 var app = express();
+app.use(express.json());
+
 var port = process.env.PORT || 3000;
 
 const SMART_CONTRACT_ADDRESS = process.env.SMART_CONTRACT_ADDRESS;
@@ -43,40 +45,50 @@ app.get("/balanceOf", async (req, res) => {
 });
 
 // TODO: implement the register method
-// app.post('/register', async (req, res) => {
-//     try {
-//         const data = await contract.methods.register(req.body.address, req.body.username);
-//         res.json({ value: data });
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ success: false, message: 'Error fetching data from the smart contract' });
-//     }
-// });
+app.post('/register', async (req, res) => {
+    const { username, descriptor } = req.body;
+    try {
+        const wallet = Wallet.createRandom();
+        // TODO replace with a safer way to store the private key
+        console.log(`Registering user ${username} with address ${wallet.address} and private key ${wallet.privateKey}`);  
+        const data = await contract.methods.register(wallet.address, descriptor);
+        // res.json({ value: data });
+        res.json({ value: { address: wallet.address, privateKey: wallet.privateKey, username: req.body.username } });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Error fetching data from the smart contract' });
+    }
+});
 
 // Use this method to send a message
 // TODO should infer sender from header token, for now, just grab from request body
-app.post('/croak', async (req, res) => {
+app.post("/croak", async (req, res) => {
 
-    console.log(req);
+    const { fromAddress, toAddress, message } = req.body;
+
+    console.log(fromAddress, toAddress);
     try {
         // Send a message with XMTP
-        const signer = Wallet.createRandom();
+
+        const privateKey = process.env.WALLET_PRIVATE_KEY;
+        const wallet = new Wallet(privateKey);
+        const signer = wallet.connect(provider);
+
         const xmtp = await Client.create(signer, { env: "dev" });
+        
         // Start a conversation with XMTP
-        const conversation = await xmtp.conversations.newConversation(
-        req.body.recipientAddress,
-        );
+        const conversation = await xmtp.conversations.newConversation(toAddress);
         // Load all messages in the conversation
         const messages = await conversation.messages();
         // Send a message
-        await conversation.send(req.body.message);
+        await conversation.send(message);
         // Listen for new messages in the conversation
         for await (const message of await conversation.streamMessages()) {
-        console.log(`[${message.senderAddress}]: ${message.content}`);
+            console.log(`[${message.senderAddress}]: ${message.content}`);
         }
         // Call smart contract
-        const data = await contract.methods.croak(req.body.recipientAddress).send({ from: req.body.senderAddress });
-        console.log(data);
+        // const data = await contract.methods.croak(toAddress).send({ from: fromAddress });
+        // console.log(data);
         res.json({ value: messages });
     } catch (error) {
         console.error(error);

@@ -4,6 +4,16 @@
 
 ## How to Run It?
 
+### Node Server
+Currently a backend server is needed for:
+1. Interacting with XMTP
+2. Generating EOA key pairs for web2 users
+(These are not directly on the client frontend as we are trying Bubbl low-code solution and had some troubles integrating web3 libs directly in there!)
+
+To run, simply go `npm run start`.
+And you should have an instance on port 3000 (dev) and 80 (prod).
+Check out the `curl-test.bash` script for some quick examples of how to call the REST API endpoints.
+
 ### Smart contracts
 1. Copy and paste contract codes into Remix to deploy!
 2. Select the chain to use. E.g. Inject provider from Metamask Linea Testnet [check guide](https://docs.linea.build/build-on-linea/quickstart/deploy-smart-contract/remix)
@@ -11,7 +21,7 @@
 
 ### Testnet Contracts
 
-Linea Goerli [0x1566a2eb94f5950039dcd29b2ed113f97457ce5e](https://goerli.lineascan.build/tx/0x93e8a852f1ac6d560addbd11045def442fbd9e6a4b79d57e8d2fda1e736ba086) (Note this is with older version of compiler before Shanghai upgrade!)
+Linea Goerli [0x43b5dbc8d72b23061b41d48ab8299c3712f1b38f](https://goerli.lineascan.build/address/0x43b5dbc8d72b23061b41d48ab8299c3712f1b38f#code) (Note this is with older version of compiler before Shanghai upgrade!)
 Scroll Sepolia [0x5379ce2C107B948cEAE8531e3F013C98643FFdAB](https://sepolia.scrollscan.com/address/0x5379ce2c107b948ceae8531e3f013c98643ffdab#code)
 Sepolia [0xB12e0Fe7c24A8a565BB35dce594Af00C9FcDd776](https://sepolia.etherscan.io/tx/0x3dd58d5deb5b1b0355f5bd3af30ad620e28c5ac78d599dc7a64a88abe670b946)
 

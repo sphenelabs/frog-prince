@@ -1,1 +1,6 @@
-url -X POST http://localhost:3000/croak -H "Content-Type: application/json" -d '{"recipientAddress":"0x0xe015D6eFaC7030aa18A36227C30543c54AC68A5a", "message":"Hello, world!", "senderAddress":"0xFe328a3CF3776850F342107884cb1448F45790eF"}'
+# step 1 register frog
+curl -X POST http://localhost:3000/register -H "Content-Type: application/json" -d '{"username":"Bob"}'
+# step 2 like another frog (show affection by sending them mosquitoes)
+curl -X POST http://localhost:3000/sendMosquitoes -H "Content-Type: application/json" -d '{"fromAddress":"0x0xe015D6eFaC7030aa18A36227C30543c54AC68A5a", "toAddress":"0xFe328a3CF3776850F342107884cb1448F45790eF"}'
+# step 3 croak and get to know each other
+curl -X POST http://localhost:3000/croak -H "Content-Type: application/json" -d '{"fromAddress":"0x0xe015D6eFaC7030aa18A36227C30543c54AC68A5a", "message":"Hello, world!", "toAddress":"0xFe328a3CF3776850F342107884cb1448F45790eF"}'
