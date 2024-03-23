@@ -52,7 +52,7 @@ app.get("/frogs", async (req, res) => {
 
 app.post("/sendMosquitoes", async (req, res) => {
     try {
-        var receipt = await contract.methods.sendMosquitoes(2, WALLET_ADDRESS_2).send({ from: address });
+        var receipt = await contract.methods.sendMosquitoes(2, WALLET_ADDRESS_2).send({ from: WALLET_ADDRESS });
         res.json({ value: data });
     } catch (error) {
         console.error(error);
