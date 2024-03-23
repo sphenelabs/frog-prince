@@ -48,21 +48,22 @@ app.get("/balanceOf", async (req, res) => {
     }
 });
 
-// TODO: implement the register method
+// Endpoint to register a new frog
+// TODO make this more secure
 app.post('/register', async (req, res) => {
     const { username, descriptor } = req.body;
     try {
         const wallet = Wallet.createRandom();
-        // TODO replace with a safer way to store the private key
-        console.log(`Registering user ${username} with address ${wallet.address} and private key ${wallet.privateKey}`);  
-        const data = await contract.methods.register(wallet.address, descriptor);
-        // res.json({ value: data });
-        res.json({ value: { address: wallet.address, privateKey: wallet.privateKey, username: req.body.username } });
+        console.log("Created wallet", wallet);
+        const contractInteraction = createContractInteraction(wallet.privateKey);
+        await contractInteraction.register(wallet.address, descriptor); // Use the wallet address as the sender
+        res.json({ address: wallet.address, privateKey: wallet.privateKey, mnemonic: wallet.mnemonic.phrase, username });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ success: false, message: 'Error fetching data from the smart contract' });
+        res.status(500).json({ success: false, message: 'Error registering frog in the smart contract' });
     }
 });
+
 
 // Use this method to send a message
 // TODO should infer sender from header token, for now, just grab from request body
@@ -144,19 +145,52 @@ app.post("/sendMosquitoes", async (req, res) => {
  *   modelId: string,
  *   prompt: string,
  * }
- */
-app.post("/generateEggImages", async (req, res) => {
-    const { fromAddress, modelId, prompt } = req.body;
-    try {
-        const promptContract = new web3.eth.Contract(require(promptContractABIPath), promptContractAddress, { from: fromAddress });
-        let result = await promptContract.methods.calculatecalculateAIResult(modelId, prompt, {
-            value: fee,
-        });
+//  */
+// app.post("/generateEggImages", async (req, res) => {
+//     const { fromAddress, modelId, prompt } = req.body;
+//     try {
+//         const promptContract = new web3.eth.Contract(require(promptContractABIPath), promptContractAddress, { from: fromAddress });
+//         let result = await promptContract.methods.calculatecalculateAIResult(modelId, prompt, {
+//             value: fee,
+//         });
+//     }
+// });
+
+
+// Function to create a smart contract interaction object
+function createContractInteraction(privateKey) {
+    // console.log("Creating contract interaction using private key", mnemonic);
+    // const privateKey = mnemonic.privateKey;
+    const wallet = new Wallet(privateKey);
+    const provider = new Provider(privateKey, RPC_URL);
+    const web3 = new Web3(provider);
+    const contract = new web3.eth.Contract(SMART_CONTRACT_ABI, SMART_CONTRACT_ADDRESS);
+
+    return {
+        // Get the balance of a wallet
+        getBalanceOf: async (walletAddress) => {
+            return await contract.methods.balanceOf(walletAddress).call();
+        },
+
+        // Register a new user
+        register: async (address, descriptor) => {
+            return await contract.methods.register(address, descriptor).send({ from: wallet.address });
+        },
+
+        // Send a message (croak) to another user
+        croak: async (toAddress, message) => {
+            // This is a placeholder for the method to send a message.
+            // Adjust according to your contract's method for sending messages.
+            // Assuming `croak` is the smart contract method for sending messages.
+            return await contract.methods.croak(toAddress, message).send({ from: wallet.address });
+        },
+
+        // Send mosquitoes to another user
+        sendMosquitoes: async (amount, toAddress) => {
+            return await contract.methods.sendMosquitoes(amount, toAddress).send({ from: wallet.address });
+        },
     }
-});
-
-
-
+}
 
 app.listen(port);
 console.log('listening on', port);

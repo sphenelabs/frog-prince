@@ -24,7 +24,15 @@ Check out the `curl-test.bash` script for some quick examples of how to call the
 Linea Goerli [0x43b5dbc8d72b23061b41d48ab8299c3712f1b38f](https://goerli.lineascan.build/address/0x43b5dbc8d72b23061b41d48ab8299c3712f1b38f#code) (Note this is with older version of compiler before Shanghai upgrade!)
 Scroll Sepolia [0x1e78f9c7ea2c82a86fd359f646de22cbdf4cbcad](https://sepolia.scrollscan.com/address/0x1e78f9c7ea2c82a86fd359f646de22cbdf4cbcad#code)
 Sepolia [0x00413c9b9dbcd5b26bedff354bb1a675ffa989d0](https://sepolia.etherscan.io/tx/0x3dd58d5deb5b1b0355f5bd3af30ad620e28c5ac78d599dc7a64a88abe670b946)
+Optimism Sepolia [0x00413c9B9DbCD5b26bEDff354bB1A675ffa989d0](https://optimism-sepolia.blockscout.com/address/0x00413c9B9DbCD5b26bEDff354bB1A675ffa989d0)
 
+#### Problems with the Different Networks
+
+Different network had different issues.
+1. Linea Goerli - `hatchTadpole` exists block limit; had to use older version of compiler and OZ
+2. Scroll Sepolia - all functions work
+3. Sepolia - `hatchTadpole` pending for a long time and got dropped
+4. OP Sepolia - could not verify contract
 
 ### Confidential! 
 Here is a set of confidentials to get you started playing with the app on testnet! Note that these are Testnet credentials only. Replace with your own and keep them safe when going live!
