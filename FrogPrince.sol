@@ -35,7 +35,7 @@ contract FrogPrince is ERC721URIStorage {
     event EggLaid(address indexed from, address indexed partner, string cid);
     event FrogsMatched(address indexed from, address indexed partner);
 
-    constructor(uint _matchThreshold, uint _mintThreshold, uint _maxMosquitoes) ERC721("FrogPrincess", "FRGPRN") {
+    constructor(uint _matchThreshold, uint _mintThreshold, uint _maxMosquitoes) ERC721("FrogPrince", "FROG") {
         matchThreshold = _matchThreshold;
         mintThreshold = _mintThreshold;
         maxMosquitoes = _maxMosquitoes;

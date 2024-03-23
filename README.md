@@ -22,8 +22,8 @@ Check out the `curl-test.bash` script for some quick examples of how to call the
 ### Testnet Contracts
 
 Linea Goerli [0x43b5dbc8d72b23061b41d48ab8299c3712f1b38f](https://goerli.lineascan.build/address/0x43b5dbc8d72b23061b41d48ab8299c3712f1b38f#code) (Note this is with older version of compiler before Shanghai upgrade!)
-Scroll Sepolia [0x5379ce2C107B948cEAE8531e3F013C98643FFdAB](https://sepolia.scrollscan.com/address/0x5379ce2c107b948ceae8531e3f013c98643ffdab#code)
-Sepolia [0xB12e0Fe7c24A8a565BB35dce594Af00C9FcDd776](https://sepolia.etherscan.io/tx/0x3dd58d5deb5b1b0355f5bd3af30ad620e28c5ac78d599dc7a64a88abe670b946)
+Scroll Sepolia [0x1e78f9c7ea2c82a86fd359f646de22cbdf4cbcad](https://sepolia.scrollscan.com/address/0x1e78f9c7ea2c82a86fd359f646de22cbdf4cbcad#code)
+Sepolia [0x00413c9b9dbcd5b26bedff354bb1a675ffa989d0](https://sepolia.etherscan.io/tx/0x3dd58d5deb5b1b0355f5bd3af30ad620e28c5ac78d599dc7a64a88abe670b946)
 
 
 ### Confidential! 
