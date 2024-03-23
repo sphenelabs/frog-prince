@@ -55,33 +55,35 @@ app.get("/balanceOf", async (req, res) => {
 
 // Use this method to send a message
 // TODO should infer sender from header token, for now, just grab from request body
-// app.post('/croak', async (req, res) => {
+app.post('/croak', async (req, res) => {
 
-//     try {
-//         // Send a message with XMTP
-//         const signer = Wallet.createRandom();
-//         const xmtp = await Client.create(signer, { env: "dev" });
-//         // Start a conversation with XMTP
-//         const conversation = await xmtp.conversations.newConversation(
-//         req.body.recipientAddress,
-//         );
-//         // Load all messages in the conversation
-//         const messages = await conversation.messages();
-//         // Send a message
-//         await conversation.send(req.body.message);
-//         // Listen for new messages in the conversation
-//         for await (const message of await conversation.streamMessages()) {
-//         console.log(`[${message.senderAddress}]: ${message.content}`);
-//         }
-//         // Call smart contract
-//         const data = await contract.methods.croak(req.body.recipientAddress).send({ from: req.body.senderAddress });
-//         res.json({ value: data });
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ success: false, message: `Error croaking!` });
-//     }
+    console.log(req);
+    try {
+        // Send a message with XMTP
+        const signer = Wallet.createRandom();
+        const xmtp = await Client.create(signer, { env: "dev" });
+        // Start a conversation with XMTP
+        const conversation = await xmtp.conversations.newConversation(
+        req.body.recipientAddress,
+        );
+        // Load all messages in the conversation
+        const messages = await conversation.messages();
+        // Send a message
+        await conversation.send(req.body.message);
+        // Listen for new messages in the conversation
+        for await (const message of await conversation.streamMessages()) {
+        console.log(`[${message.senderAddress}]: ${message.content}`);
+        }
+        // Call smart contract
+        const data = await contract.methods.croak(req.body.recipientAddress).send({ from: req.body.senderAddress });
+        console.log(data);
+        res.json({ value: messages });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: `Error croaking!` });
+    }
 
-// });
+});
 
 app.get("/frogs", async (req, res) => {
     try {
@@ -102,10 +104,6 @@ app.post("/sendMosquitoes", async (req, res) => {
         res.status(500).json({ success: false, message: 'Error fetching data from the smart contract' });
     }
 });
-
-
-
-
 
 app.listen(port);
 console.log('listening on', port);

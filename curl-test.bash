@@ -1,0 +1,1 @@
+url -X POST http://localhost:3000/croak -H "Content-Type: application/json" -d '{"recipientAddress":"0x0xe015D6eFaC7030aa18A36227C30543c54AC68A5a", "message":"Hello, world!", "senderAddress":"0xFe328a3CF3776850F342107884cb1448F45790eF"}'
