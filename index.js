@@ -49,15 +49,39 @@ app.get("/balanceOf", async (req, res) => {
 });
 
 // TODO: implement the register method
+/**
+ * req.body = {
+ *   frogs: list of frogs,
+ *   prompt: string,
+ * }
+ */
 app.post('/register', async (req, res) => {
     const { username, descriptor } = req.body;
     try {
         const wallet = Wallet.createRandom();
         // TODO replace with a safer way to store the private key
-        console.log(`Registering user ${username} with address ${wallet.address} and private key ${wallet.privateKey}`);  
+        console.log(`Registering user ${username} with address ${wallet.address} and private key ${wallet.privateKey}`);
         const data = await contract.methods.register(wallet.address, descriptor);
         // res.json({ value: data });
-        res.json({ value: { address: wallet.address, privateKey: wallet.privateKey, username: req.body.username } });
+        // res.json({ value: { address: wallet.address, privateKey: wallet.privateKey, username: req.body.username } });
+        
+        res.json({ value: { address: wallet.address, privateKey: wallet.privateKey, username: req.body.username, eggCids } });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Error fetching data from the smart contract' });
+    }
+});
+
+app.post('/generateEggImages', async (req, res) => {
+    const { modelId, prompt, frogs } = req.body;
+    try {
+        const eggCids = [];
+        frogs.foreach(frog => {
+            promptContract.methods.calculateAIResult(50, prompt);
+            const cid = promptContract.methods.getAIResult(50, prompt);
+            eggCids.push(cid);
+        });
+        res.json({ value: { eggCids } });
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: 'Error fetching data from the smart contract' });
@@ -79,7 +103,7 @@ app.post("/croak", async (req, res) => {
         const signer = wallet.connect(provider);
 
         const xmtp = await Client.create(signer, { env: "dev" });
-        
+
         // Start a conversation with XMTP
         const conversation = await xmtp.conversations.newConversation(toAddress);
         // Load all messages in the conversation
@@ -138,22 +162,38 @@ app.post("/sendMosquitoes", async (req, res) => {
     }
 });
 
-/**
- * req.body = {
- *   fromAddress: string,
- *   modelId: string,
- *   prompt: string,
- * }
- */
-app.post("/generateEggImages", async (req, res) => {
-    const { fromAddress, modelId, prompt } = req.body;
-    try {
-        const promptContract = new web3.eth.Contract(require(promptContractABIPath), promptContractAddress, { from: fromAddress });
-        let result = await promptContract.methods.calculatecalculateAIResult(modelId, prompt, {
-            value: fee,
-        });
-    }
-});
+// /**
+//  * req.body = {
+//  *   fromAddress: string,
+//  *   modelId: string,
+//  *   prompt: string,
+//  * }
+//  */
+// app.post("/generateEggImages", async (req, res) => {
+//     const { fromAddress, modelId, prompt } = req.body;
+//     try {
+//         const promptContract = new web3.eth.Contract(require(promptContractABIPath), promptContractAddress, { from: fromAddress });
+//         var receipt = await promptContract.methods.generateEggImages(modelId, prompt).send({ from: fromAddress });
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ success: false, message: 'Error fetching data from the smart contract' });
+//     }
+// });
+
+const calculateAIResult = async (modelId, prompt) => {
+    let fee = await contract.estimateFee(modelId);
+    let result = await contract.calculateAIResult(modelId, prompt, {
+        value: fee,
+    });
+    console.log(result);
+};
+
+const getStableDiffusion = async (prompt) => {
+    //modelId for llama2 model is 50
+    let result = await contract.getAIResult(50, prompt);
+    console.log(`https://ipfs.io/ipfs/${result}`);
+    setURL(`https://ipfs.io/ipfs/${result}`);
+};
 
 
 
