@@ -40,16 +40,27 @@ app.get("/balanceOf", async (req, res) => {
     }
 });
 
-app.post("/sendMosquitoes", async (req, res) => {
+app.get("/frogs", async (req, res) => {
     try {
         const data = await contract.methods.balanceOf(WALLET_ADDRESS);
-        var receipt = await myContract.methods.sendMosquitoes(2, WALLET_ADDRESS_2).send({ from: address });
         res.json({ value: data });
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: 'Error fetching data from the smart contract' });
     }
 });
+
+app.post("/sendMosquitoes", async (req, res) => {
+    try {
+        var receipt = await contract.methods.sendMosquitoes(2, WALLET_ADDRESS_2).send({ from: address });
+        res.json({ value: data });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Error fetching data from the smart contract' });
+    }
+});
+
+
 
 
 
