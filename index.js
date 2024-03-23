@@ -23,7 +23,7 @@ const contract = new web3.eth.Contract(SMART_CONTRACT_ABI, SMART_CONTRACT_ADDRES
 
 app.get("/", async (req, res) => {
     try {
-        res.json({ value: success });
+        res.json({ value: true });
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: 'Error fetching data from the smart contract' });
