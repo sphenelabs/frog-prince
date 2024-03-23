@@ -42,19 +42,43 @@ app.get("/balanceOf", async (req, res) => {
     }
 });
 
-// Endpoint to register a new frog
-// TODO make this more secure
+
+// TODO make this more secure. We were using Circle but doesn't support Scroll nor Linea.
+/**
+ * Register a new frog (these are web2 users, so create a new wallet for them)
+ * req.body = {
+ *   frogs: list of frogs,
+ *   prompt: string,
+ * }
+ */
 app.post('/register', async (req, res) => {
     const { username, descriptor } = req.body;
     try {
         const wallet = Wallet.createRandom();
         console.log("Created wallet", wallet);
-        const provider = new Provider(WALLET_PRIVATE_KEY, RPC_URL);
+        const provider = new Provider(wallet.privateKey, RPC_URL);
         const web3 = new Web3(provider);
         const contract = new web3.eth.Contract(SMART_CONTRACT_ABI, SMART_CONTRACT_ADDRESS);
         const data = await contract.methods.register(username, descriptor).send({ from: wallet.address });
-        console.log(data)
-        res.json({ address: wallet.address, privateKey: wallet.privateKey, mnemonic: wallet.mnemonic.phrase, username });
+        console.log("Onchain receip", data);
+        console.log(`Registering user ${username} with address ${wallet.address} and private key ${wallet.privateKey}`);
+        res.json({ value: { address: wallet.address, privateKey: wallet.privateKey, mnemonic: wallet.mnemonic.phrase, username: req.body.username } });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: `Error registering ${username}` });
+    }
+});
+
+app.post('/generateEggImages', async (req, res) => {
+    const { modelId, prompt, frogs } = req.body;
+    try {
+        const eggCids = [];
+        frogs.foreach(frog => {
+            promptContract.methods.calculateAIResult(50, prompt);
+            const cid = promptContract.methods.getAIResult(50, prompt);
+            eggCids.push(cid);
+        });
+        res.json({ value: { eggCids } });
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: 'Error registering frog in the smart contract' });
@@ -148,59 +172,6 @@ app.post("/sendMosquitoes", async (req, res) => {
         res.status(500).json({ success: false, message: 'Error fetching data from the smart contract' });
     }
 });
-
-/**
- * req.body = {
- *   fromAddress: string,
- *   modelId: string,
- *   prompt: string,
- * }
-//  */
-// app.post("/generateEggImages", async (req, res) => {
-//     const { fromAddress, modelId, prompt } = req.body;
-//     try {
-//         const promptContract = new web3.eth.Contract(require(promptContractABIPath), promptContractAddress, { from: fromAddress });
-//         let result = await promptContract.methods.calculatecalculateAIResult(modelId, prompt, {
-//             value: fee,
-//         });
-//     }
-// });
-
-
-// Function to create a smart contract interaction object
-function createContractInteraction(privateKey) {
-    // console.log("Creating contract interaction using private key", mnemonic);
-    // const privateKey = mnemonic.privateKey;
-    const wallet = new Wallet(privateKey);
-    const provider = new Provider(privateKey, RPC_URL);
-    const web3 = new Web3(provider);
-    const contract = new web3.eth.Contract(SMART_CONTRACT_ABI, SMART_CONTRACT_ADDRESS);
-
-    return {
-        // Get the balance of a wallet
-        getBalanceOf: async (walletAddress) => {
-            return await contract.methods.balanceOf(walletAddress).call();
-        },
-
-        // Register a new user
-        register: async (address, descriptor) => {
-            return await contract.methods.register(address, descriptor).send({ from: wallet.address });
-        },
-
-        // Send a message (croak) to another user
-        croak: async (toAddress, message) => {
-            // This is a placeholder for the method to send a message.
-            // Adjust according to your contract's method for sending messages.
-            // Assuming `croak` is the smart contract method for sending messages.
-            return await contract.methods.croak(toAddress, message).send({ from: wallet.address });
-        },
-
-        // Send mosquitoes to another user
-        sendMosquitoes: async (amount, toAddress) => {
-            return await contract.methods.sendMosquitoes(amount, toAddress).send({ from: wallet.address });
-        },
-    }
-}
 
 app.listen(port);
 console.log('listening on', port);
