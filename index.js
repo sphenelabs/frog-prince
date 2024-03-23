@@ -3,7 +3,6 @@ var express = require('express');
 const { Web3 } = require('web3');
 const Provider = require('@truffle/hdwallet-provider');
 const { Client } = require('@xmtp/xmtp-js');
-const { Wallet } = require('ethers');
 
 var app = express();
 app.use(express.json());
@@ -47,22 +46,21 @@ app.get("/balanceOf", async (req, res) => {
 /**
  * Register a new frog (these are web2 users, so create a new wallet for them)
  * req.body = {
- *   frogs: list of frogs,
- *   prompt: string,
+ *   username: string,
+ *  descriptor: string
  * }
+ * Returns the wallet address and private key created for that user
  */
 app.post('/register', async (req, res) => {
     const { username, descriptor } = req.body;
     try {
-        const wallet = Wallet.createRandom();
-        console.log("Created wallet", wallet);
-        const provider = new Provider(wallet.privateKey, RPC_URL);
-        const web3 = new Web3(provider);
-        const contract = new web3.eth.Contract(SMART_CONTRACT_ABI, SMART_CONTRACT_ADDRESS);
-        const data = await contract.methods.register(username, descriptor).send({ from: wallet.address });
-        console.log("Onchain receip", data);
+        const web3 = new Web3(new Web3.providers.HttpProvider(RPC_URL));
+        const wallet = await web3.eth.accounts.create();
+        // const contract = new web3.eth.Contract(SMART_CONTRACT_ABI, SMART_CONTRACT_ADDRESS);
+        // const data = await contract.methods.register(username, descriptor).send({ from: wallet.address });
+        // console.log("Onchain receip", data);
         console.log(`Registering user ${username} with address ${wallet.address} and private key ${wallet.privateKey}`);
-        res.json({ value: { address: wallet.address, privateKey: wallet.privateKey, mnemonic: wallet.mnemonic.phrase, username: req.body.username } });
+        res.json({ value: { address: wallet.address, privateKey: wallet.privateKey, username: req.body.username } });
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: `Error registering ${username}` });
