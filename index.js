@@ -12,12 +12,23 @@ const WALLET_ADDRESS = process.env.WALLET_ADDRESS;
 const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
 const RPC_URL = process.env.RPC_URL;
 
+const WALLET_ADDRESS_2 = process.env.WALLET_ADDRESS_2;
+
 const provider = new Provider(WALLET_PRIVATE_KEY, RPC_URL);
 const web3 = new Web3(provider);
 const contract = new web3.eth.Contract(SMART_CONTRACT_ABI, SMART_CONTRACT_ADDRESS);
 
 // example of calling a read method and get the return: await myContract.methods["balanceOf"](address).call();
 // example of calling a read method and get the return: await myContract.methods.balanceOf(address).call();
+
+app.get("/", async (req, res) => {
+    try {
+        res.json({ value: success });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Error fetching data from the smart contract' });
+    }
+});
 
 app.get("/balanceOf", async (req, res) => {
     try {
@@ -32,13 +43,15 @@ app.get("/balanceOf", async (req, res) => {
 app.post("/sendMosquitoes", async (req, res) => {
     try {
         const data = await contract.methods.balanceOf(WALLET_ADDRESS);
-        var receipt = await myContract.methods.sendMosquitoes(5781).send({ from: address });
+        var receipt = await myContract.methods.sendMosquitoes(2, WALLET_ADDRESS_2).send({ from: address });
         res.json({ value: data });
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: 'Error fetching data from the smart contract' });
     }
 });
+
+
 
 app.listen(port);
 console.log('listening on', port);
