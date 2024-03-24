@@ -1,6 +1,13 @@
 # 👑🐸 FROG PRINCE 🐸👑
 
-2024 EthTaipei Hackathon!
+FrogPrince is an innovative and engaging Web3 dating app for everyone that showcases AI-generated future baby photos of matched users that evolves based on info gathered in the peer-to-peer (P2P) chat conversations using Large Language Model (LLM), collect tadpoles (babies) as NFTs, smart contract facilitated matching, gamified progressive dating experience to incentivize interaction. It is future-forward, heartwarming, and family-oriented in nature, focusing on the concept of getting a sneak peek into a possible shared future with AI-generated baby photos of matched users.
+
+## Mint Club Bonding Curve Assets
+
+TAPO ([0xbC9F0d339D1CB9a587857A60eD5079250F7c48a0](https://mint.club/token/sepolia/TP)) is a bonding curve ERC20 created with Mint Club with a linear bonding curve on a WETH base asset. TAPO is given to platform users to incentivize positive interactions between members to foster a lively and loving community!
+
+[FROG](https://testnets.opensea.io/assets/sepolia/0xd5826ccee83F5A0033a183C102E6e3AeE660206B/0) ([0xd5826ccee83f5a0033a183c102e6e3aee660206b](https://mint.club/nft/sepolia/FROG))is a bonding curve ERC1155 created with Mint Club with an exponential bonding curve on WETH base asset. FROG is a membership token given to frogs of FrogPrince based on when they first hop on the platform. People who registered during EthTaipei2024 will receive a founding membership token and get an opportunity in getting involved with the FrogPrince's development and growth! Join now before the hackathon ends!
+
 
 ## How to Run It?
 
@@ -25,6 +32,7 @@ Linea Goerli [0x43b5dbc8d72b23061b41d48ab8299c3712f1b38f](https://goerli.lineasc
 Scroll Sepolia [0x1e78f9c7ea2c82a86fd359f646de22cbdf4cbcad](https://sepolia.scrollscan.com/address/0x1e78f9c7ea2c82a86fd359f646de22cbdf4cbcad#code)
 Sepolia [0x00413c9b9dbcd5b26bedff354bb1a675ffa989d0](https://sepolia.etherscan.io/tx/0x3dd58d5deb5b1b0355f5bd3af30ad620e28c5ac78d599dc7a64a88abe670b946)
 Optimism Sepolia [0x00413c9B9DbCD5b26bEDff354bB1A675ffa989d0](https://optimism-sepolia.blockscout.com/address/0x00413c9B9DbCD5b26bEDff354bB1A675ffa989d0)
+Thundercore [0x0C54CA098605f36A2B0400386D91233b034398fa](https://explorer-testnet.thundercore.com/address/0x0C54CA098605f36A2B0400386D91233b034398fa/transactions)
 
 #### Problems with the Different Networks
 
@@ -63,3 +71,5 @@ WALLET_SET_NAME=frogs
   }
 }```
 
+
+❤️ 2024 EthTaipei Hackathon! Thank you to mentors, organizers, volunteers and staffs! ❤️
