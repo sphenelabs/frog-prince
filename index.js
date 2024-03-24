@@ -19,6 +19,8 @@ const WALLET_ADDRESS = process.env.WALLET_ADDRESS;
 const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
 const RPC_URL = process.env.RPC_URL;
 
+const LAY_EGG_PROMPT_JSON = require('./lay-egg-prompt.json');
+
 const provider = new Provider(WALLET_PRIVATE_KEY, RPC_URL);
 const web3 = new Web3(provider);
 const contract = new web3.eth.Contract(SMART_CONTRACT_ABI, SMART_CONTRACT_ADDRESS);
@@ -102,11 +104,21 @@ app.post('/layEgg', async (req, res) => {
         // console.log("receipt", receipt);
 
         // step 1 generate text prompt
+        const completion = await openai.chat.completions.create({
+            messages: [
+                { role: "system", content: LAY_EGG_PROMPT_JSON.system },
+                { role: "user", content: prompt}
+            ],
+            model: "gpt-4",
+        });
+        
+        const textPrompt = completion.choices[0].message.content;
+        console.log("Generated text prompt", textPrompt);
  
         // step 2 feed the text prompt to dall-e
         const response = await openai.images.generate({
             model: "dall-e-3",
-            prompt: prompt,
+            prompt: textPrompt,
             n: 1,
             size: "1024x1024",
         });
