@@ -8,6 +8,7 @@ TAPO ([0xbC9F0d339D1CB9a587857A60eD5079250F7c48a0](https://mint.club/token/sepol
 
 [FROG](https://testnets.opensea.io/assets/sepolia/0xd5826ccee83F5A0033a183C102E6e3AeE660206B/0) ([0xd5826ccee83f5a0033a183c102e6e3aee660206b](https://mint.club/nft/sepolia/FROG))is a bonding curve ERC1155 created with Mint Club with an exponential bonding curve on WETH base asset. FROG is a membership token given to frogs of FrogPrince based on when they first hop on the platform. People who registered during EthTaipei2024 will receive a founding membership token and get an opportunity in getting involved with the FrogPrince's development and growth! Join now before the hackathon ends!
 
+![FROG NFT](https://github.com/sphenelabs/frog-prince/blob/main/screenshots/Screenshot%20from%202024-03-23%2022-43-09.png)
 
 ## How to Run It?
 
@@ -45,6 +46,8 @@ Different network had different issues.
 ### ORA
 
 ORA is on Sepolia. Amount to pay per generation is quite high at 0.18 ether. We end up implementing offchain generation as well (way cheaper in production than ORA). 
+
+![GENAIFLOW](https://github.com/sphenelabs/frog-prince/blob/main/screenshots/Screenshot%20from%202024-03-23%2022-10-41.png)
 
 
 ### Confidential! 
